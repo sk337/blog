@@ -8,12 +8,15 @@ import {
   CardDescription,
 } from "@/components/ui/card";
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
+import markdownit from "markdown-it";
 
 export const metadata = {
   title: "My Simple Blog",
   description: "A simple blog built with Next.js and Postgres",
 };
 
+const md = markdownit();
+console.log(md.parse("# Hello world", {}));
 export default async function Home() {
   const posts = await sql`select * from posts`;
 
@@ -29,7 +32,9 @@ export default async function Home() {
                 <CardTitle>{post.title}</CardTitle>
                 <CardDescription>{process.env.ADMIN_USERNAME}</CardDescription>
               </CardHeader>
-              {post.content}
+              <div
+                dangerouslySetInnerHTML={{ __html: md.render(post.content) }}
+              ></div>
             </CardContent>
           </Card>
         ))}
